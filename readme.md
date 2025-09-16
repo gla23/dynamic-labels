@@ -72,3 +72,7 @@ This really helps for these reasons:
 Downsides?
 
 - The options are not included within a Directus snapshot when transfered between projects. The is usually fine though as it's common though to make core data get transfered using any of the community solutions.
+
+# Technical notes
+
+See `labels.vue` in the main repository.
