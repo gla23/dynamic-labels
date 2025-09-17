@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-console.log();
+
 export default defineComponent({
   props: {
     value: {
@@ -38,8 +38,8 @@ export default defineComponent({
       default: null,
     },
   },
-  setup: (props) => {
-    console.log(props.value);
-  },
+  // setup: (props) => {
+  // console.log(props.value);
+  // },
 });
 </script>
