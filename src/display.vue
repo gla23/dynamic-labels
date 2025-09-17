@@ -12,7 +12,7 @@
         disabled
         label
         :class="{ 'has-icon': !!item.icon || !!item.color }"
-        style="margin-right: 8px"
+        style="margin-right: 8px; padding-left: 4px"
       >
         <v-icon
           v-if="item.icon"
