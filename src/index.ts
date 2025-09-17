@@ -1,7 +1,6 @@
 import { defineDisplay, useStores } from "@directus/extensions-sdk";
 import DisplayComponent from "./display.vue";
 import { jumpM2M } from "./lib/jumpM2M";
-import { raw } from "./lib/raw";
 
 // See related-values/index.ts in the main codebase for similar example code!
 
@@ -39,18 +38,42 @@ export default defineDisplay({
       value: field.field,
     }));
 
-    const columnMeta = {
-      interface: "select-dropdown",
-      options: { choices },
-      width: "full",
-    };
-    const columnsToPick = ["text", "icon", "color"];
+    const columnsToPick = ["color", "text", "icon"];
     return [
+      {
+        field: "showAsDot",
+        name: "$t:displays.labels.show_as_dot",
+        type: "boolean",
+        meta: {
+          width: "half",
+          interface: "boolean",
+        },
+        schema: {
+          default_value: false,
+        },
+      },
       ...columnsToPick.map((column) => ({
         field: `${column}Column`,
         type: "string",
         name: `$t:${column}`,
-        meta: columnMeta,
+        meta: {
+          width: "half",
+          interface: "select-dropdown",
+          options: { choices },
+          conditions:
+            column === "color"
+              ? []
+              : [
+                  {
+                    rule: {
+                      showAsDot: {
+                        _eq: true,
+                      },
+                    },
+                    hidden: true,
+                  },
+                ],
+        },
       })),
 
       // {
@@ -120,8 +143,9 @@ export default defineDisplay({
   },
 });
 
-interface UserDefinedOptions {
+export interface UserDefinedOptions {
   textColumn: string;
   iconColumn: string;
   colorColumn: string;
+  showAsDot: boolean;
 }

@@ -1,31 +1,44 @@
 <template>
-  <v-chip
-    v-for="item in Array.isArray(value) ? value.map(item => item[Object.keys(item)[0] as any]) : [value]"
-    :key="item.value"
-    :style="{
-      '--v-chip-color': item.foreground,
-      '--v-chip-background-color': item.background,
-    }"
-    small
-    disabled
-    label
-    :class="{ 'has-icon': !!item.icon || !!item.colour }"
-    style="margin-right: 8px"
-  >
-    <v-icon
-      v-if="item.icon"
-      :name="item.icon"
-      :color="item.colour"
-      left
-      small
-    />
-    <display-color
-      v-else-if="item.colour"
-      class="inline-dot"
-      :value="item.colour"
-    />
-    {{ item.name }}
-  </v-chip>
+  <div class="display-labels">
+    <template v-if="!showAsDot">
+      <v-chip
+        v-for="item in labels"
+        :key="item.text"
+        :style="{
+          '--v-chip-color': item.foreground,
+          '--v-chip-background-color': item.background,
+        }"
+        small
+        disabled
+        label
+        :class="{ 'has-icon': !!item.icon || !!item.color }"
+        style="margin-right: 8px"
+      >
+        <v-icon
+          v-if="item.icon"
+          :name="item.icon"
+          :color="item.color"
+          left
+          small
+        />
+        <display-color
+          v-else-if="item.color"
+          class="inline-dot"
+          :value="item.color"
+        />
+        {{ item.text }}
+      </v-chip>
+    </template>
+    <template v-else>
+      <display-color
+        v-for="item in labels"
+        :key="item.text"
+        v-tooltip="item.text"
+        :value="item.color"
+        style="margin-right: 4px"
+      />
+    </template>
+  </div>
 </template>
 
 <script lang="ts">
@@ -37,9 +50,25 @@ export default defineComponent({
       type: Object,
       default: null,
     },
+    iconColumn: { type: String },
+    textColumn: { type: String },
+    colorColumn: { type: String },
+    showAsDot: { type: Boolean },
   },
-  // setup: (props) => {
-  // console.log(props.value);
-  // },
+  setup: (props) => {
+    const items = Array.isArray(props.value)
+      ? props.value.map((item) => item[Object.keys(item)[0] as any])
+      : [props.value];
+
+    const labels = items.map((item) => ({
+      color: item[props.colorColumn ?? "colour"],
+      text: item[props.textColumn ?? "name"],
+      icon: item[props.iconColumn ?? "icon"],
+      foreground: null,
+      background: null,
+    }));
+
+    return { labels };
+  },
 });
 </script>
