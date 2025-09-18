@@ -89,7 +89,7 @@ To do: Make video of how to replace the admin settings method with the dynamic l
 
 # Bugs
 
-To get around a nasty issue (`[useStores]: The stores could not be found.`), the render sometimes fails for M2M fields. A refresh fixes the issue.
+M2M fields are buggy. There's a nasty issue that stops the labels rendering in the Table Layout when swapping collections or going to the next page of results. A refresh makes them display before you move again. The console has `[useStores]: The stores could not be found.` which is out my Directus depth right now. PR fix accepted!
 
 # Technical notes
 
