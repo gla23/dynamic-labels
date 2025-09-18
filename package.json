@@ -1,6 +1,6 @@
 {
 	"name": "dynamic-labels",
-	"description": "Like the built-in 'Labels' Display, but get the label component's props from the related table, rather than hard coded by the column data.",
+	"description": "The built-in 'Labels' Display, but get the label component's props from the related table, rather than hard coded by the column data.",
 	"icon": "extension",
 	"version": "1.0.0",
 	"keywords": [

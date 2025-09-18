@@ -1,3 +1,35 @@
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
+  props: {
+    value: {
+      type: Object,
+      default: null,
+    },
+    iconColumn: { type: String },
+    textColumn: { type: String },
+    colorColumn: { type: String },
+    showAsDot: { type: Boolean },
+  },
+  setup: (props) => {
+    const items = Array.isArray(props.value)
+      ? props.value.map((item) => item[Object.keys(item)[0] as any])
+      : [props.value];
+
+    const labels = items.map((item) => ({
+      color: item[props.colorColumn ?? "colour"],
+      text: item[props.textColumn ?? "name"],
+      icon: item[props.iconColumn ?? "icon"],
+      foreground: null,
+      background: null,
+    }));
+
+    return { labels };
+  },
+});
+</script>
+
 <template>
   <div class="display-labels">
     <template v-if="!showAsDot">
@@ -40,35 +72,3 @@
     </template>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  props: {
-    value: {
-      type: Object,
-      default: null,
-    },
-    iconColumn: { type: String },
-    textColumn: { type: String },
-    colorColumn: { type: String },
-    showAsDot: { type: Boolean },
-  },
-  setup: (props) => {
-    const items = Array.isArray(props.value)
-      ? props.value.map((item) => item[Object.keys(item)[0] as any])
-      : [props.value];
-
-    const labels = items.map((item) => ({
-      color: item[props.colorColumn ?? "colour"],
-      text: item[props.textColumn ?? "name"],
-      icon: item[props.iconColumn ?? "icon"],
-      foreground: null,
-      background: null,
-    }));
-
-    return { labels };
-  },
-});
-</script>
