@@ -1,11 +1,12 @@
 {
 	"name": "dynamic-labels",
-	"description": "The built-in 'Labels' Display, but get the label component's props from the related table, rather than hard coded by the column data.",
+	"description": "The built-in 'Labels' Display, but get the label component's props from the chosen item rather than hard coded by column data.",
 	"icon": "extension",
-	"version": "1.0.2",
+	"version": "1.0.5",
 	"repository": {
 		"directory": "https://github.com/gla23/dynamic-labels"
 	},
+	"homepage": "https://github.com/gla23/dynamic-labels",
 	"keywords": [
 		"directus",
 		"directus-extension",
@@ -19,7 +20,7 @@
 		"type": "display",
 		"path": "dist/index.js",
 		"source": "src/index.ts",
-		"host": "^10.10.0"
+		"host": "^11.11.0"
 	},
 	"scripts": {
 		"build": "directus-extension build",
