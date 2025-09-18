@@ -28,10 +28,38 @@ export default defineComponent({
     return { labels };
   },
 });
+
+// const props = withDefaults(
+//   defineProps<{
+//     value: object | object[];
+//     iconColumn: string;
+//     textColumn: string;
+//     colorColumn: string;
+//     showAsDot: boolean;
+//   }>(),
+//   {
+//     showAsDot: false,
+//   }
+// );
+// const items = computed(() => {
+//   const items = Array.isArray(props.value)
+//     ? props.value.map((item) => item[Object.keys(item)[0] as any])
+//     : [props.value];
+
+//   const labels = items.map((item) => ({
+//     color: item[props.colorColumn ?? "colour"],
+//     text: item[props.textColumn ?? "name"],
+//     icon: item[props.iconColumn ?? "icon"],
+//     foreground: null,
+//     background: null,
+//   }));
+
+//   return labels;
+// });
 </script>
 
 <template>
-  <div class="display-labels">
+  <span class="display-labels">
     <template v-if="!showAsDot">
       <v-chip
         v-for="item in labels"
@@ -70,5 +98,5 @@ export default defineComponent({
         style="margin-right: 4px"
       />
     </template>
-  </div>
+  </span>
 </template>

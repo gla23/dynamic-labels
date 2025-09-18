@@ -1,6 +1,6 @@
-## Dynamic Labels Display extension
+## Dynamic Labels
 
-This provides the same functionality as the built-in "Labels" Display, except it gets the parameters (icon, colour, name) from data in the related M2O or M2M table, rather than looking up hard coded values based on the string/integer value of a column.
+This Directus extension provides the same functionality as the built-in "Labels" Display, except it gets the parameters (icon, colour, name) from data in a related M2O or M2M item, rather than looking up hard coded values based on the string/integer value of a column.
 
 ### How the built-in "Lables" display works
 
@@ -40,7 +40,7 @@ This data is used to look up the correct parameters in the array above, which th
 
 ## How this extension works
 
-For this extension you provide parameters like so:
+For this extension, you provide parameters like so instead:
 
 ```
 {
@@ -51,7 +51,7 @@ For this extension you provide parameters like so:
 }
 ```
 
-Then a M2O field or a M2M field can use this display to render a related item in another table, such as
+Then a M2O field or a M2M field can use this display to render their related item from another table, such as
 
 ```
 {
@@ -61,16 +61,15 @@ Then a M2O field or a M2M field can use this display to render a related item in
 }
 ```
 
-You define which columns to look up and use that data within the same label component.
+You define which columns in the related table to use as props for the same label component.
 
 To do: Show screenshot of the Table Layout displaying the single label for a M2O field, and multiple labels for a M2M field.
+
 To do: Show how the single and multiple labels are replaced by dots if you choose the show as dots instead
 
 # Why?
 
-To do: Show video of how to replace the admin settings method with the dynamic labels method
-
-When you use this extension the data for which text, icon, colour to use in each label is no longer hard coded in the admin settings. This means that we can use a standard table to store this data 🎉
+When you use this extension the label's text, icon and colour is no longer hard coded in admin settings. This means that we can use a standard table to store this data 🎉
 
 This really helps for multiple reasons:
 
@@ -81,6 +80,16 @@ This really helps for multiple reasons:
 Are there downsides?
 
 - The options are not included within a Directus snapshot when transfered between projects. The is usually fine though as it's common though to make core data get transfered using any of the community solutions.
+
+# Installation
+
+Use the Directus Marketplace.
+
+To do: Make video of how to replace the admin settings method with the dynamic labels method
+
+# Bugs
+
+To get around a nasty issue (`[useStores]: The stores could not be found.`), the render sometimes fails for M2M fields. A refresh fixes the issue.
 
 # Technical notes
 

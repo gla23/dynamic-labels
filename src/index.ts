@@ -75,43 +75,6 @@ export default defineDisplay({
                 ],
         },
       })),
-
-      // {
-      //   field: "sum",
-      //   type: "boolean",
-      //   name: "Calulate Sum",
-      //   meta: {
-      //     interface: "boolean",
-      //     options: {
-      //       label: "Yes",
-      //     },
-      //     width: "half",
-      //   },
-      // },
-      // {
-      //   field: "prefix",
-      //   type: "string",
-      //   name: "Prefix",
-      //   meta: {
-      //     interface: "input",
-      //     options: {
-      //       font: "monospace",
-      //     },
-      //     width: "half",
-      //   },
-      // },
-      // {
-      //   field: "suffix",
-      //   type: "string",
-      //   name: "Suffix",
-      //   meta: {
-      //     interface: "input",
-      //     options: {
-      //       font: "monospace",
-      //     },
-      //     width: "half",
-      //   },
-      // },
     ];
   },
   fields: (
@@ -137,9 +100,14 @@ export default defineDisplay({
 
     if (!isM2M) return userChosenFields;
 
-    const jumpData = jumpM2M(fieldInfo.collection, fieldInfo.field);
-    const junctionJump = jumpData.link2.field;
-    return userChosenFields.map((field) => `${junctionJump}.${field}`);
+    try {
+      const jumpData = jumpM2M(fieldInfo.collection, fieldInfo.field);
+      const junctionJump = jumpData.link2.field;
+      return userChosenFields.map((field) => `${junctionJump}.${field}`);
+    } catch (e) {
+      console.error("Directus issue means this M2M isn't showing!");
+      return [];
+    }
   },
 });
 
