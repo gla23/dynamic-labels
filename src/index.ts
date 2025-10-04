@@ -10,8 +10,8 @@ export default defineDisplay({
   icon: "label",
   description: "Display label(s) from columns in the related table",
   component: DisplayComponent,
-  types: ["alias", "integer", "uuid", "text"],
-  localTypes: ["m2o", "m2m"],
+  types: ["alias", "integer", "uuid", "text", "string"],
+  localTypes: ["m2o", "m2m", "o2m", "translations", "m2a", "file", "files"],
   options: ({ editing, relations }) => {
     // https://directus.io/docs/tutorials/extensions/summarize-relational-items-in-a-custom-display-extension
 
