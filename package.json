@@ -2,7 +2,7 @@
 	"name": "dynamic-labels",
 	"description": "The built-in 'Labels' Display, but get the label component's props from the chosen item rather than hard coded by column data.",
 	"icon": "extension",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"repository": {
 		"directory": "https://github.com/gla23/dynamic-labels"
 	},

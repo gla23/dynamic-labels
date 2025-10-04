@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
+import { raw } from "./lib/raw";
 
 export default defineComponent({
   props: {
@@ -10,6 +11,7 @@ export default defineComponent({
     iconColumn: { type: String },
     textColumn: { type: String },
     colorColumn: { type: String },
+    secondaryTextColumn: { type: String },
     noBackground: { type: Boolean },
   },
   setup: (props) => {
@@ -17,13 +19,17 @@ export default defineComponent({
       ? props.value.map((item) => item[Object.keys(item)[0] as any])
       : [props.value];
 
-    const labels = items.map((item) => ({
-      color: item[props.colorColumn ?? "colour"],
-      text: item[props.textColumn ?? "name"],
-      icon: item[props.iconColumn ?? "icon"],
-      foreground: null,
-      background: props.noBackground ? "transparent" : null,
-    }));
+    const labels = items.map((item) => {
+      return {
+        color: item[props.colorColumn ?? "colour"],
+        text:
+          item[props.textColumn ?? "name"] ??
+          item[props.secondaryTextColumn ?? "name"],
+        icon: item[props.iconColumn ?? "icon"],
+        foreground: null,
+        background: props.noBackground ? "transparent" : null,
+      };
+    });
 
     return { labels };
   },

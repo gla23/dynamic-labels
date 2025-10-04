@@ -42,6 +42,7 @@ export default defineDisplay({
       icon: "The field containing the icon to display. Leave empty to simply show a dot.",
       color: "The field containing the colour to use for the icon or dot.",
       text: "The field containing text to put in the label. Leave empty to just render the icon or dot.",
+      secondaryText: "Fallback field to use when the text field is empty",
     } as const;
     const columnsToPick = Object.keys(notes) as (keyof typeof notes)[];
     return [
@@ -85,9 +86,10 @@ export default defineDisplay({
 
     // To do: prefil a decent column here? Nah better done in the form
     const userChosenFields = [
-      options?.colorColumn,
       options?.iconColumn,
+      options?.colorColumn,
       options?.textColumn,
+      options?.secondaryTextColumn,
     ].filter(Boolean);
 
     const isM2M = fieldInfo.type === "alias";
@@ -106,8 +108,9 @@ export default defineDisplay({
 });
 
 export interface UserDefinedOptions {
-  textColumn: string;
   iconColumn: string;
   colorColumn: string;
-  showAsDot: boolean;
+  textColumn: string;
+  secondaryTextColumn: string;
+  noBackground: boolean;
 }
