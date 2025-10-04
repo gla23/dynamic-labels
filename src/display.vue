@@ -10,7 +10,7 @@ export default defineComponent({
     iconColumn: { type: String },
     textColumn: { type: String },
     colorColumn: { type: String },
-    showAsDot: { type: Boolean },
+    noBackground: { type: Boolean },
   },
   setup: (props) => {
     const items = Array.isArray(props.value)
@@ -22,7 +22,7 @@ export default defineComponent({
       text: item[props.textColumn ?? "name"],
       icon: item[props.iconColumn ?? "icon"],
       foreground: null,
-      background: null,
+      background: props.noBackground ? "transparent" : null,
     }));
 
     return { labels };
@@ -35,10 +35,10 @@ export default defineComponent({
 //     iconColumn: string;
 //     textColumn: string;
 //     colorColumn: string;
-//     showAsDot: boolean;
+//     noBackground: boolean;
 //   }>(),
 //   {
-//     showAsDot: false,
+//     noBackground: false,
 //   }
 // );
 // const items = computed(() => {
@@ -60,43 +60,33 @@ export default defineComponent({
 
 <template>
   <span class="display-labels">
-    <template v-if="!showAsDot">
-      <v-chip
-        v-for="item in labels"
-        :key="item.text"
-        :style="{
-          '--v-chip-color': item.foreground,
-          '--v-chip-background-color': item.background,
-        }"
+    <v-chip
+      v-for="item in labels"
+      :key="item.text"
+      :style="{
+        '--v-chip-color': item.foreground,
+        '--v-chip-background-color': item.background,
+      }"
+      small
+      disabled
+      label
+      :class="{ 'has-icon': !!item.icon || !!item.color }"
+      style="margin-right: 8px; padding-left: 4px"
+    >
+      <v-icon
+        v-if="item.icon"
+        :name="item.icon"
+        :color="item.color"
+        left
         small
-        disabled
-        label
-        :class="{ 'has-icon': !!item.icon || !!item.color }"
-        style="margin-right: 8px; padding-left: 4px"
-      >
-        <v-icon
-          v-if="item.icon"
-          :name="item.icon"
-          :color="item.color"
-          left
-          small
-        />
-        <display-color
-          v-else-if="item.color"
-          class="inline-dot"
-          :value="item.color"
-        />
-        {{ item.text }}
-      </v-chip>
-    </template>
-    <template v-else>
-      <display-color
-        v-for="item in labels"
-        :key="item.text"
-        v-tooltip="item.text"
-        :value="item.color"
-        style="margin-right: 4px"
       />
-    </template>
+      <display-color
+        v-else-if="item.color"
+        class="inline-dot"
+        style="margin-right: 4px"
+        :value="item.color"
+      />
+      {{ item.text }}
+    </v-chip>
   </span>
 </template>

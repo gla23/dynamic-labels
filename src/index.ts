@@ -38,43 +38,37 @@ export default defineDisplay({
       value: field.field,
     }));
 
-    const columnsToPick = ["color", "text", "icon"];
+    const notes = {
+      icon: "The field containing the icon to display. Leave empty to simply show a dot.",
+      color: "The field containing the colour to use for the icon or dot.",
+      text: "The field containing text to put in the label. Leave empty to just render the icon or dot.",
+    } as const;
+    const columnsToPick = Object.keys(notes) as (keyof typeof notes)[];
     return [
-      {
-        field: "showAsDot",
-        name: "$t:displays.labels.show_as_dot",
-        type: "boolean",
-        meta: {
-          width: "half",
-          interface: "boolean",
-        },
-        schema: {
-          default_value: false,
-        },
-      },
       ...columnsToPick.map((column) => ({
         field: `${column}Column`,
         type: "string",
         name: `$t:${column}`,
         meta: {
           width: "half",
+          note: notes[column],
           interface: "select-dropdown",
           options: { choices },
-          conditions:
-            column === "color"
-              ? []
-              : [
-                  {
-                    rule: {
-                      showAsDot: {
-                        _eq: true,
-                      },
-                    },
-                    hidden: true,
-                  },
-                ],
         },
       })),
+      {
+        field: "noBackground",
+        name: "Remove background",
+        type: "boolean",
+        meta: {
+          width: "half",
+          interface: "boolean",
+          note: "Display the text and icon/dot without the 'chip' styling.",
+        },
+        schema: {
+          default_value: false,
+        },
+      },
     ];
   },
   fields: (
