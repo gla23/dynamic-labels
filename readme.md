@@ -4,6 +4,8 @@ This Directus extension provides the same functionality as the built-in "Labels"
 
 There is also an option to just display the dot like in the Labels component. In that case, you only choose the column for the colour.
 
+Say if this doesn't make sense see below (link) for a more detailed explanation. Then move the 'why' stuff up 👍
+
 ### How the built-in "Lables" display works
 
 For the standard "Labels" Display, you provide parameters in the data model settings like so:
@@ -76,13 +78,15 @@ When you use this extension, the label's text, icon and colour is no longer hard
 This is really helpful for many reasons:
 
 - If we already have the data we want in our data model, we can simply pull in all the values. There is no need to duplicate this data in admin settings.
-- The same options can be reused for multiple fields, even across different tables. Updates to the option set will immediately propogate across each context. You can even use the "Interface Filter" on each M2O or M2M field to choose a sub-set of items to be available in each context. You can therefore combine option sets into one big table and choose which ones go in each context.
 - The options table data model can be extended! If you need to add relations to your table containing the options, you can do this as usual. Normally the options data dies within admin settings, unable to be linked to any other tables 😔
+  - The option data can easily come from the SDK as any other data would
+  - To do: Explain how you can add a description and that is visible on the proper select page not a little dropdown
 - The options in your custom lists can be edited by non-admin users with the existing Directus infrastructure and permissions model. Normally they're stuck in admin settings where only an admin user can edit them!
-
-Are there downsides?
+- The same options can be reused for multiple fields, even across different tables. Updates to the option set will immediately propogate across each context. You can even use the "Interface Filter" on each M2O or M2M field to choose a sub-set of items to be available in each context. You can therefore combine option sets into one big table and choose which ones go in each context.
+  Are there downsides?
 
 - The options are not included within a Directus snapshot when transfered between projects. The is usually fine though as it's common though to make core data get transfered using any of the community solutions.
+- It's no longer the cute dropdown - opens the whole side drawer thing. This feels a bit OTT for selecting between Yes and No, but it's awesome when the list grows or you want to add more fields to the display
 
 # Installation
 
