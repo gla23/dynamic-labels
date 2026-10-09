@@ -1,6 +1,9 @@
-import { defineDisplay, useStores } from "@directus/extensions-sdk";
+import { defineDisplay } from "@directus/extensions-sdk";
 import DisplayComponent from "./display.vue";
+import { Columns, collectionDefaults, resolveColumns } from "./lib/columns";
 import { jumpM2M } from "./lib/jumpM2M";
+import { relatedCollection } from "./lib/relatedCollection";
+import { stores } from "./lib/stores";
 
 // See related-values/index.ts in the main codebase for similar example code!
 
@@ -30,9 +33,8 @@ export default defineDisplay({
     // M2M has both m2o and o2m filled in 👍
     const relatedCollection = relations.m2o?.related_collection;
 
-    const { useFieldsStore } = useStores();
-    const fieldsStore = useFieldsStore();
-    const fields = fieldsStore.getFieldsForCollection(relatedCollection);
+    const fields = stores().useFieldsStore().getFieldsForCollection(relatedCollection);
+    const defaults = collectionDefaults(relatedCollection);
     const choices = fields.map((field: any) => ({
       text: field.name,
       value: field.field,
@@ -54,8 +56,9 @@ export default defineDisplay({
           width: "half",
           note: notes[column],
           interface: "select-dropdown",
-          options: { choices },
+          options: { choices, allowNone: true },
         },
+        schema: { default_value: defaults[`${column}Column`] },
       })),
       {
         field: "noBackground",
@@ -84,33 +87,24 @@ export default defineDisplay({
   ) => {
     // Returns the fields of the closest collection to download. So if it's a simple M2O, this is the fields of the target collection. But if it's a M2M this is the junction table.
 
-    // To do: prefil a decent column here? Nah better done in the form
-    const userChosenFields = [
-      options?.iconColumn,
-      options?.colorColumn,
-      options?.textColumn,
-      options?.secondaryTextColumn,
-    ].filter(Boolean);
-
-    const isM2M = fieldInfo.type === "alias";
-
-    if (!isM2M) return userChosenFields;
-
     try {
-      const jumpData = jumpM2M(fieldInfo.collection, fieldInfo.field);
-      const junctionJump = jumpData.link2.field;
+      const target = relatedCollection(fieldInfo.collection, fieldInfo.field);
+      const userChosenFields = Object.values(resolveColumns(options, target)).filter(
+        (column): column is string => !!column
+      );
+
+      const isM2M = fieldInfo.type === "alias";
+      if (!isM2M) return userChosenFields;
+
+      const junctionJump = jumpM2M(fieldInfo.collection, fieldInfo.field).link2.field;
       return userChosenFields.map((field) => `${junctionJump}.${field}`);
     } catch (e) {
-      console.error("Directus issue means this M2M isn't showing!");
+      console.error("[dynamic-labels]: Couldn't work out the fields to fetch", e);
       return [];
     }
   },
 });
 
-export interface UserDefinedOptions {
-  iconColumn: string;
-  colorColumn: string;
-  textColumn: string;
-  secondaryTextColumn: string;
-  noBackground: boolean;
+export interface UserDefinedOptions extends Columns {
+  noBackground?: boolean;
 }

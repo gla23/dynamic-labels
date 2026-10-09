@@ -1,87 +1,71 @@
 <script lang="ts">
-import { useStores } from "@directus/extensions-sdk";
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
+import { resolveColumns } from "./lib/columns";
 import { relatedCollection } from "./lib/relatedCollection";
+import { memo, stores } from "./lib/stores";
 
 export default defineComponent({
   props: {
     value: {
-      type: Object,
+      type: [Object, Array],
       default: null,
     },
     collection: { type: String, required: true },
     field: { type: String, required: true },
-    iconColumn: { type: String },
-    textColumn: { type: String },
-    colorColumn: { type: String },
-    secondaryTextColumn: { type: String },
+    // undefined when never set, so the default column is used
+    iconColumn: { type: String, default: undefined },
+    textColumn: { type: String, default: undefined },
+    colorColumn: { type: String, default: undefined },
+    secondaryTextColumn: { type: String, default: undefined },
     noBackground: { type: Boolean },
   },
   setup: (props) => {
-    const items = Array.isArray(props.value)
-      ? props.value.map((item) => item[Object.keys(item)[0] as any])
-      : [props.value];
+    const { useFieldsStore } = stores();
+    const target = computed(() => relatedCollection(props.collection, props.field));
+    const columns = computed(() => resolveColumns(props, target.value));
 
-    const labels = items.map((item) => {
-      return {
-        color: item[props.colorColumn ?? "colour"],
-        text:
-          item[props.textColumn ?? "name"] ??
-          item[props.secondaryTextColumn ?? "name"],
-        icon: item[props.iconColumn ?? "icon"],
-        foreground: null,
-        background: props.noBackground ? "transparent" : null,
-      };
+    const labels = computed(() => {
+      const items: any[] = Array.isArray(props.value)
+        ? props.value.map((item) => item?.[Object.keys(item)[0] as any])
+        : [props.value];
+      const { iconColumn, colorColumn, textColumn, secondaryTextColumn } = columns.value;
+
+      return items
+        .filter((item) => item && typeof item === "object")
+        .map((item) => ({
+          color: colorColumn ? item[colorColumn] : null,
+          text:
+            (textColumn ? item[textColumn] : null) ??
+            (secondaryTextColumn ? item[secondaryTextColumn] : null),
+          icon: iconColumn ? item[iconColumn] : null,
+          foreground: null,
+          background: props.noBackground ? "transparent" : null,
+        }));
     });
 
     // The icon column's own display, so the icon draws however that field is set to draw — a
     // custom icon display included — rather than as a Material Symbols font name
-    const { useFieldsStore } = useStores();
-    const target = relatedCollection(props.collection, props.field);
-    const iconField = target
-      ? useFieldsStore().getField(target, props.iconColumn ?? "icon")
-      : null;
-    const iconDisplay: string | null = iconField?.meta?.display ?? null;
-    const iconDisplayOptions = iconField?.meta?.display_options ?? {};
+    const iconField = computed(() => {
+      const collection = target.value;
+      const iconColumn = columns.value.iconColumn;
+      if (!collection || !iconColumn) return null;
+      return memo(`field:${collection}.${iconColumn}`, () =>
+        useFieldsStore().getField(collection, iconColumn)
+      );
+    });
+    const iconDisplay = computed<string | null>(() => iconField.value?.meta?.display ?? null);
+    const iconDisplayOptions = computed(() => iconField.value?.meta?.display_options ?? {});
 
     return { labels, iconDisplay, iconDisplayOptions };
   },
 });
-
-// const props = withDefaults(
-//   defineProps<{
-//     value: object | object[];
-//     iconColumn: string;
-//     textColumn: string;
-//     colorColumn: string;
-//     noBackground: boolean;
-//   }>(),
-//   {
-//     noBackground: false,
-//   }
-// );
-// const items = computed(() => {
-//   const items = Array.isArray(props.value)
-//     ? props.value.map((item) => item[Object.keys(item)[0] as any])
-//     : [props.value];
-
-//   const labels = items.map((item) => ({
-//     color: item[props.colorColumn ?? "colour"],
-//     text: item[props.textColumn ?? "name"],
-//     icon: item[props.iconColumn ?? "icon"],
-//     foreground: null,
-//     background: null,
-//   }));
-
-//   return labels;
-// });
 </script>
 
 <template>
   <span class="display-labels">
     <v-chip
-      v-for="item in labels"
-      :key="item.text"
+      v-for="(item, index) in labels"
+      :key="index"
       :style="{
         '--v-chip-color': item.foreground,
         '--v-chip-background-color': item.background,

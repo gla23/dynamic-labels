@@ -1,4 +1,4 @@
-import { useStores } from "@directus/extensions-sdk";
+import { memo, stores } from "./stores";
 import { Relation, Field } from "@directus/types";
 import { raw } from "./raw";
 
@@ -13,7 +13,11 @@ export interface JumpData {
 }
 
 export function jumpM2M(collection: string, field: string): JumpData {
-  const { useFieldsStore, useRelationsStore } = useStores();
+  return memo(`jump:${collection}.${field}`, () => findJump(collection, field));
+}
+
+function findJump(collection: string, field: string): JumpData {
+  const { useFieldsStore, useRelationsStore } = stores();
   const fieldsStore = useFieldsStore();
   const relationsStore = useRelationsStore();
 

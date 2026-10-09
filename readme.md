@@ -48,10 +48,11 @@ For this "Dynamic Labels" extension, you instead provide parameters like so:
 
 ```
 {
-  "textColumn": "text",
+  "textColumn": "short_text",
+  "secondaryTextColumn": "text",
   "iconColumn": "icon",
   "colorColumn": "colour",
-  "showAsDot": false
+  "noBackground": false
 }
 ```
 
@@ -94,9 +95,9 @@ Use the Directus Marketplace to install the extension.
 
 This extension is then available to choose within the Display tab of a M2O or M2M field. Pick the relevant columns and you're good to go.
 
-# Bugs
+# Defaults
 
-M2M fields are buggy right now 😔 There's an issue that stops the labels rendering in the Table Layout when swapping collections or going to the next page of results. A refresh makes them display... until you move page again. The console gives `[useStores]: The stores could not be found.`, a fix for which is out of my Directus depth right now. PR fix accepted!
+When you pick this display, the options are filled in from the related collection's fields: an icon field (a `select-icon` interface or a field named like `icon`), a colour field (a `select-color` interface or a field named like `colour`/`color`), and the text. A `short_text`-style field takes priority for the text as it makes for a smaller chip, with the full `text`/`name`/`title` field as the fallback. Options you never set use these defaults; clear an option to turn it off.
 
 <!-- # Technical notes -->
 
