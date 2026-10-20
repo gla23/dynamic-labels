@@ -18,8 +18,18 @@ export function stores(): Record<string, any> {
       // An injection context without the stores, fall through to the cached ones
     }
   }
+  cached ??= rootStores();
   if (!cached) throw new Error("[dynamic-labels]: The stores could not be found.");
   return cached;
+}
+
+/** The stores straight from the root `App` component, which provides them in `useSystem()`. Needed
+ *  when `fields()` runs before anything could inject, e.g. a table's first fetch on page load runs
+ *  from a watcher before any cell has been set up. `container._vnode` is set in production builds
+ *  too, unlike `app._instance` which is only kept for devtools. */
+function rootStores(): Record<string, any> | null {
+  const container = document.querySelector("#app") as any;
+  return container?._vnode?.component?.provides?.stores ?? null;
 }
 
 const memos = new Map<string, unknown>();
