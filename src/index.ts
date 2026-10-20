@@ -1,8 +1,7 @@
 import { defineDisplay } from "@directus/extensions-sdk";
 import DisplayComponent from "./display.vue";
 import { Columns, collectionDefaults, resolveColumns } from "./lib/columns";
-import { jumpM2M } from "./lib/jumpM2M";
-import { relatedCollection } from "./lib/relatedCollection";
+import { junctionField, relatedCollection } from "./lib/relatedCollection";
 import { stores } from "./lib/stores";
 
 // See related-values/index.ts in the main codebase for similar example code!
@@ -31,7 +30,7 @@ export default defineDisplay({
 
     // M2O has just relations.m2o filled in
     // M2M has both m2o and o2m filled in 👍
-    const relatedCollection = relations.m2o?.related_collection;
+    const relatedCollection = relations.m2o?.related_collection ?? relations.o2m?.collection;
 
     const fields = stores().useFieldsStore().getFieldsForCollection(relatedCollection);
     const defaults = collectionDefaults(relatedCollection);
@@ -93,10 +92,9 @@ export default defineDisplay({
         (column): column is string => !!column
       );
 
-      const isM2M = fieldInfo.type === "alias";
-      if (!isM2M) return userChosenFields;
-
-      const junctionJump = jumpM2M(fieldInfo.collection, fieldInfo.field).link2.field;
+      // O2Ms are aliases too, but their items are the related rows themselves
+      const junctionJump = junctionField(fieldInfo.collection, fieldInfo.field);
+      if (!junctionJump) return userChosenFields;
       return userChosenFields.map((field) => `${junctionJump}.${field}`);
     } catch (e) {
       console.error("[dynamic-labels]: Couldn't work out the fields to fetch", e);

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { resolveColumns } from "./lib/columns";
-import { relatedCollection } from "./lib/relatedCollection";
+import { junctionField, relatedCollection } from "./lib/relatedCollection";
 import { memo, stores } from "./lib/stores";
 
 export default defineComponent({
@@ -24,10 +24,13 @@ export default defineComponent({
     const target = computed(() => relatedCollection(props.collection, props.field));
     const columns = computed(() => resolveColumns(props, target.value));
 
+    const junction = computed(() => junctionField(props.collection, props.field));
+
     const labels = computed(() => {
-      const items: any[] = Array.isArray(props.value)
-        ? props.value.map((item) => item?.[Object.keys(item)[0] as any])
-        : [props.value];
+      // M2M values are junction rows holding the item, O2M values are the items themselves
+      const jump = junction.value;
+      const values: any[] = Array.isArray(props.value) ? props.value : [props.value];
+      const items = jump ? values.map((row) => row?.[jump]) : values;
       const { iconColumn, colorColumn, textColumn, secondaryTextColumn } = columns.value;
 
       return items

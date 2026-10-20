@@ -8,6 +8,16 @@ export function relatedCollection(collection: string, field: string): string | n
   return memo(`related:${collection}.${field}`, () => findRelatedCollection(collection, field));
 }
 
+/** The field on the junction row that holds the related item, when the field goes through a
+ *  junction (M2M, files, translations), or null for an M2O/O2M whose items are the related rows */
+export function junctionField(collection: string, field: string): string | null {
+  return memo(`junction:${collection}.${field}`, () => {
+    const { useRelationsStore } = stores();
+    const relations: Relation[] = useRelationsStore().getRelationsForField(collection, field);
+    return relations.length === 2 ? jumpM2M(collection, field).link2.field : null;
+  });
+}
+
 function findRelatedCollection(collection: string, field: string) {
   const { useRelationsStore } = stores();
   const relations: Relation[] = useRelationsStore().getRelationsForField(
